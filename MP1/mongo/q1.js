@@ -34,7 +34,8 @@ var c = db.br.find({
             }
         ).map(function(doc) {return doc._id;})
     }
-}, {business_id:1, name: 1});
+}, {business_id:1, name: 1, _id:0});
+
 
 while(c.hasNext()) 
 {
