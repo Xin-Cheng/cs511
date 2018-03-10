@@ -70,19 +70,39 @@ var temp = db.br.aggregate(
         { $out : "averageReviews" }
       ]
 );
-var c = db.averageReviews.aggregate(
-    [
-        {
-          $group:
-            {
-                _id: null,
-                maxReview: { $max: "$avgReview" },
-            }
-        }
-      ]
-).map(function(doc) {
-    return doc.maxReview;
-});
+// var c = db.averageReviews.aggregate(
+//     [
+//         {
+//           $group:
+//             {
+//                 _id: null,
+//                 maxReview: { $max: "$avgReview" },
+//             }
+//         }
+//       ]
+// ).map(function(doc) {
+//     return doc.maxReview;
+// });
+
+var c = db.averageReviews.find(
+    {
+        avgReview: { $in: db.averageReviews.aggregate(
+            [
+                {
+                  $group:
+                    {
+                        _id: null,
+                        maxReview: { $max: "$avgReview" },
+                    }
+                }
+              ]
+        ).map(function(doc) {
+            return doc.maxReview;
+        })
+    }
+    }
+);
+
 while(c.hasNext()) 
 {
     printjson(c.next());
