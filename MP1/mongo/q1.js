@@ -14,28 +14,65 @@ var temp = db.br.aggregate(
       ]
 );
 
-var c = db.br.find({
-    business_id: {
-        $in: db.averageReviews.find(
-            {
-                avgReview: { $in: db.averageReviews.aggregate(
-                    [
+// var c = db.br.find({
+//     business_id: {
+//         $in: db.averageReviews.find(
+//             {
+//                 avgReview: { $in: db.averageReviews.aggregate(
+//                     [
+//                         {
+//                           $group:
+//                             {
+//                                 _id: null,
+//                                 maxReview: { $max: "$avgReview" },
+//                             }
+//                         }
+//                     ]).map(function(doc) {
+//                         return doc.maxReview;
+//                     })
+//                 }
+//             }
+//         ).map(function(doc) {return doc._id;})
+//     }
+// }, {business_id:1, name: 1, _id:0});
+
+var c = db.br.aggregate(
+    [
+        {
+            $match: {
+                business_id: {
+                    $in: db.averageReviews.find(
                         {
-                          $group:
-                            {
-                                _id: null,
-                                maxReview: { $max: "$avgReview" },
+                            avgReview: { $in: db.averageReviews.aggregate(
+                                [
+                                    {
+                                      $group:
+                                        {
+                                            _id: null,
+                                            maxReview: { $max: "$avgReview" },
+                                        }
+                                    }
+                                ]).map(function(doc) {
+                                    return doc.maxReview;
+                                })
                             }
                         }
-                    ]).map(function(doc) {
-                        return doc.maxReview;
-                    })
+                    ).map(function(doc) {return doc._id;})
                 }
             }
-        ).map(function(doc) {return doc._id;})
-    }
-}, {business_id:1, name: 1, _id:0});
-
+        },
+        {
+            $group : {
+                _id : "$business_id",
+                business_id: {"$first" : "$business_id"},
+                name: {"$first" : "$name"}
+            }
+        },
+        {
+            $project : { business_id : 1 , name : 1 , _id: 0}
+        },
+    ]
+);
 
 while(c.hasNext()) 
 {
