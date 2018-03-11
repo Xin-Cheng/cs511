@@ -1,7 +1,7 @@
 conn = new Mongo();
 db = conn.getDB("mydb");
 
-var drop = db.trueDelivery.drop();
+// var drop = db.trueDelivery.drop();
 var true_delivery = db.br.aggregate(
     [
         {
@@ -20,7 +20,7 @@ var true_delivery = db.br.aggregate(
         { $out : "trueDelivery" }
     ]
 );
-var drop2 = db.falseDelivery.drop()
+// var drop2 = db.falseDelivery.drop()
 var false_delivery = db.br.aggregate(
     [
         {

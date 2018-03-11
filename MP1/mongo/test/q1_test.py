@@ -26,7 +26,10 @@ def parse_json(path):
 
 def main():
     # # uniq = pandas.read_json("/mongo_q1.json").head(n=5)
-    dup = parse_json("q1.json")
+    # dup = parse_json("q1.json")
+    # uniq = parse_json("mongo_q1.json")
+    dup = pandas.read_csv("s1.csv", sep=',')
+    dup = dup['business_id'].tolist()
     uniq = parse_json("mongo_q1.json")
     check(dup, uniq)
     check(uniq, dup)
