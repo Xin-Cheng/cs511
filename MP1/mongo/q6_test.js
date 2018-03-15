@@ -78,8 +78,32 @@ var c = db.br.aggregate(
         {
             $lookup: {
                from: "user_out_state",
-               localField: "user_id",
-               foreignField: "user_id",
+               let: {
+                    brUser: "$user_id",
+                    brState: "$state"
+                },
+                pipeline: [
+                    {
+                    $match: {
+                        $expr: {
+                            $and: [
+                                {
+                                $eq: [
+                                    "$user_id",
+                                    "$$brUser"
+                                ]
+                                },
+                                {
+                                $eq: [
+                                    "$state",
+                                    "$$brState"
+                                ]
+                                }
+                            ]
+                        }
+                    }
+                    }
+                ],
                as: "fromItems"
             }
          },
@@ -87,17 +111,21 @@ var c = db.br.aggregate(
             $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$fromItems", 0 ] }, "$$ROOT" ] } }
          },
          { $project: { fromItems: 0} },
-         { $project:{ 
-             _id: 0,
-             user_id: 1,
-             true_count: 1,
-             false_count: 1,
-             cmp: {$cmp: ['$true_count','$false_count']},}
+         {
+            $match: { diff : { $gt: 0 } }
          },
          {
-            $match: { cmp: { $gt: 0 } }
+            $group : {
+                _id : {
+                    business_id: "$business_id" ,
+                },
+                business_id: {"$first" : "$business_id"},
+                avg_out_of_state_rating: { $avg: "$stars_y" },
+            }
+        },
+         {
+             $project: {_id:0}
          },
-         { $project: {user_id:1}}
     ]
 );
 
