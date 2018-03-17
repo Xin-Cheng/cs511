@@ -9,9 +9,18 @@ var c = db.br.aggregate(
                     "user_id": "$user_id",
                     "city" : "$city"
                 },
-            user_id: {"$first" : "$user_id"},
-            count:{$sum:1},
-        }
+                user_id: {"$first" : "$user_id"},
+                city: {"$first" : "$city"},
+            }
+        },
+        {
+            $group : {
+                _id : {
+                    "user_id": "$user_id",
+                },
+                user_id: {"$first" : "$user_id"},
+                count:{$sum:1}
+            }
         },
         {
             $match: { count: { $gt: 3 } }
