@@ -20,11 +20,9 @@ var c = db.br.aggregate(
             $match: { count: { $gt: 2 } }
         },
         {
-            $sort:{ "count": 1 }
-        },
-        {
             $project : { _id: 0, user_id: 1}
-        }
+        },
+        { $sort : { user_id : 1 } }
     ]
 );
 

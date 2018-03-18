@@ -48,7 +48,7 @@ var c = db.br.aggregate(
         {
             $project : { business_id : 1 , name : 1 , _id: 0}
         },
-        { $sort : { name : 1 } }
+        { $sort : { business_id : 1 } }
     ]
 );
 

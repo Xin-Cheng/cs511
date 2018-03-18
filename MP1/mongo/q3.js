@@ -11,7 +11,7 @@ var c = db.br.aggregate(
             }
         },
         {
-            $sort:{ "state": 1 }
+            $sort:{ state: 1 }
         },
         {
             $project : { _id: 0}
